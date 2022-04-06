@@ -41,13 +41,20 @@ class Resolution():
                             new_clause = self.create_clause(str(lit), str('~' + lit.atom), i_clause, j_clause) # Right is negated left is not, based on i and j
                             # print(new_clause)
                             break
-                # repeated literal check
+                # Repeated literals Check
+                if not self.is_repeated(new_clause):
+                    # True Check aka no ~p and p in same clause
+                    if not self.is_true(new_clause):
+                        # Redundant logic/clause check
+                        
+                
                 j += 1
             i += 1
+        
+        
 
-    # Change form to standard form
 
-    # Add to kb
+        # Add to kb
 
 
     '''
@@ -78,7 +85,20 @@ class Resolution():
         return Clause(literals, contains, hash, len(self.kb.list)) # TODO +1?
 
 
-    def is_repeated(self):
-        pass
+    def is_repeated(self, clause):
+        return len(clause.contains) != len(clause.literals)
+    
+    def is_true(self, clause):
+        for lit in clause.contains:
+            # Negated lit
+            if lit[0] == '~':
+                hold = lit[1] in clause.contains
+            else:
+                # Normal lit
+                hold = ('~' + lit) in clause.contains
+        
+        return hold
 
+    def is_redundant(self, clause):
+        pass
         
