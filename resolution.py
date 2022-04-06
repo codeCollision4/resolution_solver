@@ -27,10 +27,13 @@ class Resolution():
                     # If it has the ~ symbol and its opposite is in the other clasue can resolve
                     if lit.negated:
                         if lit.atom in max_set:
-                            self.create_clause(lit, lit.atom, min_set, max_set) # remove literals from i and j, left is negated right is not
+                            new_clause = self.create_clause(lit, lit.atom, min_set, max_set) # remove literals from i and j, left is negated right is not
+                            break
                     else:
                         if '~' + lit in max_set:
-                            self.create_clause(lit, '~' + lit, min_set, max_set) # Right is negated left is not, based on i and j
+                            new_clause = self.create_clause(lit, '~' + lit, min_set, max_set) # Right is negated left is not, based on i and j
+                            break
+                # repeated literal check
 
 
     # Change form to standard form
@@ -61,6 +64,8 @@ class Resolution():
         # Updating hash for new clause, might need to optimize TODO
         for idx, lit in enumerate(literals):
             hash[lit] = idx
+        
+        return Clause(literals, contains, hash, len(self.kb.list)) # TODO +1?
 
 
 
