@@ -25,9 +25,9 @@ def main():
                 literals = []
                 contain = set()
                 hash = {}
-                for idx, lit in enumerate(lits):
+                for id, lit in enumerate(lits):
                     contain.add(lit) # Set to quickly see if shared literals btw clauses
-                    hash["lit"] = idx # Hash map to find said literals in array
+                    hash[lit] = id # Hash map to find said literals in array
                     literals.append(Literal(lit)) # Array of literals
                 clause = Clause(literals, contain, hash, idx)
                 kb.add_clause(clause)
@@ -41,8 +41,11 @@ def main():
 
         for c in kb.list:
             print(c.index)
+            print(c.contains)
+            print(c.hash)
         print(test_clause)
         print(kb)
+        
                         
     else:
         print("Please provide a .kb file that exists. Make sure you are not just providing a directory.")

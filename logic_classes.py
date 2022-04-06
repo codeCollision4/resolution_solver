@@ -27,7 +27,7 @@ class Clause():
         self.index = idx # Number in KB
         self.literals = lits # List for literals in clause
         self.contains = contain # Set of literals in clause
-        self.hash = hash
+        self.hash = hash # Hash map to quickly access literals
         
     def negate(self):
         for idx, lit in enumerate(self.literals):
@@ -56,7 +56,10 @@ class KnowledgeBase():
     
     def add_negated_clause(self, clause):
         for lit in clause.literals:
-            self.list.append(Clause(lit, len(self.list)+1))
+            contain = set()
+            contain.add(lit)
+            hash = {lit:0}
+            self.list.append(Clause(lit, contain, hash, len(self.list)+1))
         
     def __str__(self):
         return str(self.list)
