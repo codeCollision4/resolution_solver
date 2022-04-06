@@ -30,15 +30,6 @@ class Clause():
         self.contains = contain # Set of literals in clause
         self.hash = hash # Hash map to quickly access literals
         
-    def negate(self):
-        for idx, lit in enumerate(self.literals):
-            # Swapping negation sign
-            if lit.negated:
-                self.literals[idx] = lit.atom
-            else:
-                self.literals[idx] = '~' + lit.atom
-        return self
-    
     def __str__(self):
         return str(self.literals)
     
@@ -57,10 +48,17 @@ class KnowledgeBase():
     
     def add_negated_clause(self, clause):
         for lit in clause.literals:
+            # Swapping negation sign
+            if lit.negated:
+                big_lit = Literal(lit.atom)
+                hash = {lit.atom:0}
+            else:
+                big_lit = Literal('~' + lit.atom)
+                hash = {'~' + lit.atom:0}
+            literals = [big_lit]
             contain = set()
-            contain.add(lit)
-            hash = {lit:0}
-            self.list.append(Clause(lit, contain, hash, len(self.list)+1))
+            contain.add(big_lit)
+            self.list.append(Clause(literals, contain, hash, len(self.list)+1))
         
     def __str__(self):
         return str(self.list)

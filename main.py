@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 from logic_classes import Literal, Clause, KnowledgeBase
-from resolution import resolution
+from resolution import Resolution
 
 def main():
     #Command Line Parser
@@ -26,9 +26,10 @@ def main():
                 contain = set()
                 hash = {}
                 for id, lit in enumerate(lits):
-                    contain.add(lit) # Set to quickly see if shared literals btw clauses
+                    big_lit = Literal(lit)
+                    contain.add(big_lit) # Set to quickly see if shared literals btw clauses
                     hash[lit] = id # Hash map to find said literals in array
-                    literals.append(Literal(lit)) # Array of literals
+                    literals.append(big_lit) # Array of literals
                 clause = Clause(literals, contain, hash, idx)
                 kb.add_clause(clause)
 
@@ -36,15 +37,21 @@ def main():
         test_clause = kb.remove_clause()
         
         # Calling resolution algorithm
-        resolution(kb, test_clause)
+        solver = Resolution(kb, test_clause)
+        solver.resolution()
        
 
-        for c in kb.list:
-            print(c.index)
-            print(c.contains)
-            print(c.hash)
-        print(test_clause)
-        print(kb)
+        # for c in kb.list:
+        #     for l in c.literals:
+        #         print(l)
+        #         print(type(l))
+        #     print(c.index)
+        #     print(c.contains)
+        #     print(c.hash)
+        # print(test_clause)
+        # print(kb)
+
+
         
                         
     else:
