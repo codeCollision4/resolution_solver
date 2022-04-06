@@ -27,7 +27,7 @@ def main():
                 hash = {}
                 for id, lit in enumerate(lits):
                     big_lit = Literal(lit)
-                    contain.add(big_lit) # Set to quickly see if shared literals btw clauses
+                    contain.add(lit) # Set to quickly see if shared literals btw clauses
                     hash[lit] = id # Hash map to find said literals in array
                     literals.append(big_lit) # Array of literals
                 clause = Clause(literals, contain, hash, idx)

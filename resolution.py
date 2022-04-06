@@ -5,10 +5,12 @@ class Resolution():
         self.kb = kb
         self.test_clause = test_clause
 
+
     def resolution(self):
         # 1. Negating test clause and adding to knowledge base
         self.kb.add_negated_clause(self.test_clause)
-        print(self.kb)
+        
+
         # 2. Find 2 clauses to apply resolution rule
         n = len(self.kb.list) - 1
         i = 0
@@ -31,13 +33,13 @@ class Resolution():
                     # print(self.kb.list)
                     if lit.negated:
                         if lit.atom in j_clause.contains:
-                            new_clause = self.create_clause(lit, lit.atom, i_clause, j_clause) # remove literals from i and j, left is negated right is not
-                            print(new_clause)
+                            new_clause = self.create_clause(str(lit), str(lit.atom), i_clause, j_clause) # remove literals from i and j, left is negated right is not
+                            # print(new_clause)
                             break
                     else:
                         if '~' + lit.atom in j_clause.contains:
-                            new_clause = self.create_clause(lit, '~' + lit.atom, i_clause, j_clause) # Right is negated left is not, based on i and j
-                            print(new_clause)
+                            new_clause = self.create_clause(str(lit), str('~' + lit.atom), i_clause, j_clause) # Right is negated left is not, based on i and j
+                            # print(new_clause)
                             break
                 # repeated literal check
                 j += 1
@@ -52,22 +54,22 @@ class Resolution():
     Helper Functions
     '''
     # Resolves two clauses and creates a new one
-    def create_clause(self, min_lit, max_lit, i_clause, j_clause):
+    def create_clause(self, i_lit, j_lit, i_clause, j_clause):
         # Combining clauses to then remove resolved lierals for new clause
         literals = i_clause.literals + j_clause.literals
-        contains = i_clause.union(j_clause)
+        contains = i_clause.contains.union(j_clause.contains)
         hash = {**i_clause.hash, **j_clause.hash}
 
         # Deleting resolved literals
-        min_idx = i_clause.hash[min_lit]
-        del hash[min_lit] # From dict
-        contains.remove(min_lit) # From set
-        del literals[min_idx] # From list
+        i_idx = i_clause.hash[i_lit]
+        del hash[i_lit] # From dict
+        contains.remove(i_lit) # From set
+        del literals[i_idx] # From list
 
-        max_idx = j_clause.hash[max_lit] + (len(i_clause.literals) - 1) # Subtracting the len of left array minus the removed lit for index of max on "right"
-        del hash[max_lit]
-        contains.remove(max_lit)
-        del literals[max_idx]
+        j_idx = j_clause.hash[j_lit] + (len(i_clause.literals) - 1) # Subtracting the len of left array minus the removed lit for index of max on "right"
+        del hash[j_lit]
+        contains.remove(j_lit)
+        del literals[j_idx]
 
         # Updating hash for new clause, might need to optimize TODO
         for idx, lit in enumerate(literals):

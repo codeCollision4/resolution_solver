@@ -49,15 +49,16 @@ class KnowledgeBase():
     def add_negated_clause(self, clause):
         for lit in clause.literals:
             # Swapping negation sign
+            contain = set()
             if lit.negated:
                 big_lit = Literal(lit.atom)
                 hash = {lit.atom:0}
+                contain.add(lit.atom)
             else:
                 big_lit = Literal('~' + lit.atom)
                 hash = {'~' + lit.atom:0}
+                contain.add('~' + lit.atom)
             literals = [big_lit]
-            contain = set()
-            contain.add(big_lit)
             self.list.append(Clause(literals, contain, hash, len(self.list)+1))
         
     def __str__(self):
