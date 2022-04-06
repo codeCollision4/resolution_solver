@@ -4,6 +4,7 @@
 # Holds atoms and whether the are negated, to be used in a clause
 class Literal():
     def __init__(self, lit):
+        self.lit = lit
         # Checking if atom is negated
         if lit[0] == '~':
             self.negated = True
