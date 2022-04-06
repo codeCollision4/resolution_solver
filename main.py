@@ -1,6 +1,7 @@
 import argparse
 from pathlib import Path
-from logic_classes import Clause
+from logic_classes import Literal, Clause, KnowledgeBase
+from resolution import resolution
 
 def main():
     #Command Line Parser
@@ -17,18 +18,31 @@ def main():
     if args.input.exists() and args.input.is_file():
         # Looping thru file
         with args.input.open() as f:
-            kb = []
-            # Getting all clauses, creating classes for them and then storing in list
+            kb = KnowledgeBase()
+            # Creating knowledge base with clauses
             for idx, line in enumerate(f, start=1):
-                clause = Clause(line, idx)
-                kb.append(clause)
+                lits = line.split()
+                literals = []
+                contain = set()
+                hash = {}
+                for idx, lit in enumerate(lits):
+                    contain.add(lit) # Set to quickly see if shared literals btw clauses
+                    hash["lit"] = idx # Hash map to find said literals in array
+                    literals.append(Literal(lit)) # Array of literals
+                clause = Clause(literals, contain, hash, idx)
+                kb.add_clause(clause)
 
         # Getting test clause from end of list
-        test_clause = kb.pop()
+        test_clause = kb.remove_clause()
+        
+        # Calling resolution algorithm
+        resolution(kb, test_clause)
+       
 
-        for c in kb:
-            print(c)
+        for c in kb.list:
+            print(c.index)
         print(test_clause)
+        print(kb)
                         
     else:
         print("Please provide a .kb file that exists. Make sure you are not just providing a directory.")
