@@ -1,5 +1,5 @@
 
-
+# Logic Classes used in resolution algorithm
 
 # Holds atoms and whether the are negated, to be used in a clause
 class Literal():

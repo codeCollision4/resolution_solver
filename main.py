@@ -2,7 +2,7 @@ import argparse
 from pathlib import Path
 from logic_classes import Literal, Clause, KnowledgeBase
 from resolution import Resolution
-
+# Sets up knowledge base and reads in input from file given on command line
 def main():
     #Command Line Parser
     parser = argparse.ArgumentParser()

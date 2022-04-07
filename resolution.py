@@ -1,5 +1,6 @@
 from logic_classes import Clause
 
+# Main algorithm logic
 class Resolution():
     def __init__(self, kb, test_clause):
         self.kb = kb
