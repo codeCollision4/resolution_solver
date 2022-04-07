@@ -39,12 +39,16 @@ class Clause():
 class KnowledgeBase():
     def __init__(self):
         self.list = []
+        self.hash = {}
         
     def add_clause(self, clause):
         self.list.append(clause)
+        self.hash[str(clause)] = len(self.list) # TODO might cause error
     
     def remove_clause(self):
-        return self.list.pop()
+        removed = self.list.pop()
+        del self.hash[str(removed)]
+        return removed
     
     def add_negated_clause(self, clause):
         for lit in clause.literals:
@@ -59,7 +63,9 @@ class KnowledgeBase():
                 hash = {'~' + lit.atom:0}
                 contain.add('~' + lit.atom)
             literals = [big_lit]
-            self.list.append(Clause(literals, contain, hash, len(self.list)+1))
+            new = Clause(literals, contain, hash, len(self.list)+1)
+            self.list.append(new)
+            self.hash[str(new)] = len(self.list) # TODO same as todo above
         
     def __str__(self):
         return str(self.list)

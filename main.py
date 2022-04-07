@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 from logic_classes import Literal, Clause, KnowledgeBase
-from resolution import Resolution
+from resolution import Resolution, output_clause
 # Sets up knowledge base and reads in input from file given on command line
 def main():
     #Command Line Parser
@@ -32,14 +32,19 @@ def main():
                     literals.append(big_lit) # Array of literals
                 clause = Clause(literals, contain, hash, idx)
                 kb.add_clause(clause)
-
+       
         # Getting test clause from end of list
         test_clause = kb.remove_clause()
+        
+        
         
         # Calling resolution algorithm
         solver = Resolution(kb, test_clause)
         solver.resolution()
-       
+        
+        # If Solver fails to find contradiction
+        print("Fail")
+
 
         # for c in kb.list:
         #     for l in c.literals:

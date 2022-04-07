@@ -10,8 +10,11 @@ class Resolution():
     def resolution(self):
         # 1. Negating test clause and adding to knowledge base
         self.kb.add_negated_clause(self.test_clause)
-        
 
+        # Print Kb
+        for c in self.kb.list:
+            output_clause(self.kb, c)
+        
         # 2. Find 2 clauses to apply resolution rule
         n = len(self.kb.list) - 1
         i = 0
@@ -35,27 +38,21 @@ class Resolution():
                     if lit.negated:
                         if lit.atom in j_clause.contains:
                             new_clause = self.create_clause(str(lit), str(lit.atom), i_clause, j_clause) # remove literals from i and j, left is negated right is not
+                            self.checker(new_clause, i_clause, j_clause)
+                            n = len(self.kb.list) - 1
                             # print(new_clause)
                             break
                     else:
                         if '~' + lit.atom in j_clause.contains:
                             new_clause = self.create_clause(str(lit), str('~' + lit.atom), i_clause, j_clause) # Right is negated left is not, based on i and j
+                            self.checker(new_clause, i_clause, j_clause)
+                            n = len(self.kb.list) - 1
                             # print(new_clause)
                             break
-                # Repeated literals Check
-                if not self.is_repeated(new_clause):
-                    # True Check aka no ~p and p in same clause
-                    if not self.is_true(new_clause):
-                        # Redundant logic/clause check
-                        
-                
                 j += 1
             i += 1
-        
-        
+     
 
-
-        # Add to kb
 
 
     '''
@@ -83,13 +80,14 @@ class Resolution():
         for idx, lit in enumerate(literals):
             hash[lit] = idx
         
-        return Clause(literals, contains, hash, len(self.kb.list)) # TODO +1?
+        return Clause(literals, contains, hash, len(self.kb.list)+1) # TODO +1?
 
 
     def is_repeated(self, clause):
         return len(clause.contains) != len(clause.literals)
     
     def is_true(self, clause):
+        hold = False
         for lit in clause.contains:
             # Negated lit
             if lit[0] == '~':
@@ -101,5 +99,67 @@ class Resolution():
         return hold
 
     def is_redundant(self, clause):
-        pass
+        return str(clause) in self.kb.hash
+    
+    def checker(self, clause, i_clause, j_clause):
+        c = False
+        r = True
+        i = i_clause.index
+        j = j_clause.index
+        # Repeated literals Check
+        if not self.is_repeated(clause):
+            # True Check aka no ~p and p in same clause
+            if not self.is_true(clause):
+                # Redundant logic/clause check
+                if not self.is_redundant(clause):
+                    # Contradiction check, if null/None then Valid else print and move on
+                    if not clause.contains:
+                        c = True
+                    else:
+                        c = False
+                    
+                    # Add clause to KB
+                    self.kb.add_clause(clause)
+                    
+                    # Print clause
+                    output_clause(self.kb, clause, i_idx=i, j_idx=j, resolved=r, contra=c)
         
+def output_clause(kb, clause, i_idx=0, j_idx=0, resolved=False, contra=False):
+    out = "{}. ".format(clause.index)
+    
+    if contra and resolved:
+        out += "Contradiction {{{}, {}}}".format(i_idx,j_idx)
+        print(out)
+        print("Valid")
+        exit()
+        
+    if not contra:
+        # Building rest of string
+        for lit in clause.literals:
+            out += "{} ".format(lit)
+    
+    # No resolution
+    if not resolved and not contra:
+        out += "{}"
+        print(out)
+    # Resolved but not contradiction
+    elif resolved and not contra:
+        out += "{{{}, {}}}".format(i_idx, j_idx)
+        print(out)
+    
+    
+    
+    
+    
+# 1. ∼p q {}
+# 2. ∼z y {}
+# 3. p {}
+# 4. z {}
+# 5. ∼y {}
+# 6. q {3, 1}
+# 7. y {4, 2}
+# 8. ∼z {5, 2}
+# 6. Contradiction {7, 5}
+# Valid
+
+
