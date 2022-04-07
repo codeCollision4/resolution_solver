@@ -63,7 +63,16 @@ class Resolution():
         # Combining clauses to then remove resolved lierals for new clause
         literals = i_clause.literals + j_clause.literals
         contains = i_clause.contains.union(j_clause.contains)
+        if len(literals) != len(contains):
+            new = set()
+            for l in literals:
+                if l not in contains:
+                    new.add(str(l))
+            contains = new
         hash = {**i_clause.hash, **j_clause.hash}
+        # Updating hash for new clause, might need to optimize TODO
+        for idx, lit in enumerate(literals):
+            hash[str(lit)] = idx
 
         # Deleting resolved literals
         i_idx = i_clause.hash[i_lit]
@@ -84,19 +93,24 @@ class Resolution():
 
 
     def is_repeated(self, clause):
-        return len(clause.contains) != len(clause.literals)
+        if len(clause.contains) != len(clause.literals):
+            clause.literals = [i for n, i in enumerate(clause.literals) if i not in clause.literals[:n]]
+
     
     def is_true(self, clause):
-        hold = False
+        
         for lit in clause.contains:
             # Negated lit
             if lit[0] == '~':
-                hold = lit[1] in clause.contains
+                if lit[1] in clause.contains:
+                    return True
             else:
                 # Normal lit
-                hold = ('~' + lit) in clause.contains
+                if ('~' + lit) in clause.contains:
+                    return True
         
-        return hold
+        return False
+        
 
     def is_redundant(self, clause):
         return str(clause) in self.kb.hash
@@ -106,12 +120,12 @@ class Resolution():
         r = True
         i = i_clause.index
         j = j_clause.index
-        # Repeated literals Check
-        if not self.is_repeated(clause):
-            # True Check aka no ~p and p in same clause
-            if not self.is_true(clause):
-                # Redundant logic/clause check
-                if not self.is_redundant(clause):
+        # True Check aka no ~p and p in same clause
+        if not self.is_true(clause):
+            # Redundant logic/clause check
+            if not self.is_redundant(clause):
+                # Repeated literals Check
+                if not self.is_repeated(clause):
                     # Contradiction check, if null/None then Valid else print and move on
                     if not clause.contains:
                         c = True

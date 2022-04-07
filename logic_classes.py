@@ -12,7 +12,7 @@ class Literal():
             self.negated = False
         # Char used for literal
         if self.negated:
-            self.atom = lit[1]    
+            self.atom = lit[1:]    
         else:
             self.atom = lit
 
