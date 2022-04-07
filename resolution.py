@@ -78,7 +78,7 @@ class Resolution():
 
         # Updating hash for new clause, might need to optimize TODO
         for idx, lit in enumerate(literals):
-            hash[lit] = idx
+            hash[str(lit)] = idx
         
         return Clause(literals, contains, hash, len(self.kb.list)+1) # TODO +1?
 
